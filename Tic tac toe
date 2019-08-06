@@ -1,0 +1,183 @@
+from collections import Counter
+
+import random
+
+board = range(1,10)
+
+#game board
+gb = []
+for i in board:
+    gb.append(i)
+
+# rows, columns and diagonals of game board
+def dimensions(gb):
+    row0 = gb[0:3]
+    row1 = gb[3:6]
+    row2 = gb[6:9]
+    col0 = gb[0:9:3]
+    col1 = gb[1:9:3]
+    col2 = gb[2:9:3]
+    diag1 = gb[0:9:4]
+    diag2 = gb[2:8:2]
+    dims = [row0, row1, row2, col0, col1, col2, diag1, diag2]
+    return dims
+
+# game board matrix represenation
+def display_board(gb):
+    for i in range(3):
+        print ( "|", gb[0+i*3], "|", gb[1+i*3], "|", gb[2+i*3], "|")
+
+print ("Hi! Let's play tic tac toe! Here is our game board:\n")
+display_board(gb)
+
+# let user decide if he wants to play X or O. X will start the game
+def set_player():
+    player1 = ""
+    player2 = ""
+    while player1 == "" and player2 == "":
+        while True:
+            choice = input("\nDo you want to be X or O? Please type X or O:\n").upper()
+            if choice == "X":
+                player1 = "X"
+                player2 = "O"
+                break
+            elif choice == "O":
+                player1 = "O"
+                player2 = "X"
+                break
+            else:
+                print("You can only select X or O.")
+                continue
+        print ("\nThanks! You will play with ", player1, ", "  "and I will be ", player2, ". The player with X goes first")
+        return (player1, player2)
+
+player1, player2 = set_player()
+
+# user move
+def make_move_user(gb, player1):
+    while True:
+        try:
+            position = int(input("\nTo make a move, please select a position on our game board. Enter value 1-9:\n"))
+#valide if user input is integer. if not, through an error:
+        except ValueError:
+            print("This is not an integer. Please enter value 1-9")
+            continue
+        else:
+#check if user input is in board range (1-9)
+            if position in board:
+                 position = position - 1
+            else:
+                print("Value is out of range.")
+                continue
+ #check i selected position hasn't been taken
+        if gb[position] in board:
+            gb[position] = player1
+            display_board(gb)
+            dimensions(gb)
+            break
+        else:
+            print ("This position has already been taken.")
+        continue
+
+
+#find vacant positions in a list
+def find_freespots(mylist) :
+    freespots = [i for i in mylist if isinstance(i, int)]
+    return freespots
+
+
+def make_move_comp(player1, player2, gb, dims):
+    print("\nMy turn!")
+# try to win
+    for i in range(0,8):
+        if (    dims[i].count(player2) == 2
+            and dims[i].count(player1) == 0):
+            position = random.choice(find_freespots(dims[i]))-1
+            gb[position] = player2
+            display_board(gb)
+            return
+        elif (    dims[i].count(player2) == 1
+            and dims[i].count(player1) == 0):
+            position = random.choice(find_freespots(dims[i]))-1
+            gb[position] = player2
+            display_board(gb)
+            return
+# otherwise position your moves randomly
+    position = random.choice(find_freespots(gb))-1
+    gb[position] = player2
+    display_board(gb)
+
+
+def check_winner(dims):
+    for i in range (0,8):
+        if dims[i].count(player1) == 3:
+            return player1
+            return
+        elif (dims[i].count(player2)) == 3:
+            return player2
+            return
+    return "none"
+
+# check for the tie
+def check_tie(gb):
+    if sum(1 for m in gb if m in board) == 0:
+        return True
+        print("Oooops! There is a tie!")
+    else:
+        return False
+
+while True:
+    if check_winner(dimensions(gb)) != "none":
+        print("\nHaroo! We've got a winner! And the winner is",check_winner(dimensions(gb)))
+        inp = input("Wanna play again? Type Y for 'yes' or N for 'no':\n").upper()
+        if inp == "N":
+            break
+        if inp == "Y":
+            gb = []
+            for i in board:
+                gb.append(i)
+            print("Don't forget - you are",player1,"and I am",player2)
+            continue
+    elif check_tie(gb) == True:
+        print("\nOoops! There is a tie!")
+        inp = input("Wanna play again? Type Y for 'yes' or N for 'no':\n").upper()
+        if inp == "N":
+            break
+        if inp == "Y":
+            gb = []
+            for i in board:
+                gb.append(i)
+            print("Don't forget - you are",player1,"and I am",player2)
+            continue
+    else:
+        if player1 == "X":
+            make_move_user(gb, player1)
+        else:
+            make_move_comp(player1, player2, gb, dimensions(gb))
+    if check_winner(dimensions(gb)) != "none":
+        print("\nHaroo! We've got a winner! And the winner is",check_winner(dimensions(gb)))
+        inp = input("Wanna play again? Type Y for 'yes' or N for 'no':\n").upper()
+        if inp == "N":
+            break
+        if inp == "Y":
+            gb = []
+            for i in board:
+                gb.append(i)
+            print("Don't forget - you are",player1,"and I am",player2)
+            continue
+    elif check_tie(gb) == True:
+        inp = input("Wanna play again? Type Y for 'yes' or N for 'no':\n").upper()
+        if inp == "N":
+            break
+        if inp == "Y":
+            gb = []
+            for i in board:
+                gb.append(i)
+            print("Don't forget - you are",player1,"and I am",player2) 
+            continue
+    else:
+        if player1 == "X":
+            make_move_comp(player1, player2, gb, dimensions(gb))
+        else:
+            make_move_user(gb, player1)
+        continue
