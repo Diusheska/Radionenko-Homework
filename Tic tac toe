@@ -16,6 +16,7 @@ def display_board(gb):
     for i in range(ms):
         print ( "|", gb[0+i*ms], "|", gb[1+i*ms], "|", gb[2+i*ms], "|")
 
+
 # rows, columns and diagonals of game board
 def dimensions(gb):
     row0 = gb[0:ms]
@@ -32,6 +33,7 @@ def dimensions(gb):
 
 print ("Hi! Let's play tic tac toe! Here is our game board:\n")
 display_board(gb)
+
 
 # let user decide if he wants to play X or O. X will start the game
 def set_player():
@@ -54,25 +56,27 @@ def set_player():
         print ("Thanks! You will play with",player1,", "  "and I will be", player2,". The player with X goes first")
         return (player1, player2)
 
+
 player1, player2 = set_player()
+
 
 # user move
 def make_move_user(gb, player1):
     while True:
         try:
             position = int(input("\nTo make a move, please select a position on our game board. Enter value 1-9:\n"))
-#valide if user input is integer. if not, through an error:
+# validate if user input is integer. if not, throw an error:
         except ValueError:
             print("This is not an integer. Please enter value 1-9")
             continue
         else:
-#check if user input is in board range (1-9)
+# check if user input is in board range (1-9)
             if position in board:
                  position = position - 1
             else:
                 print("Value is out of range.")
                 continue
- #check i selected position hasn't been taken
+ # check if selected position hasn't been taken
         if gb[position] in board:
             gb[position] = player1
             display_board(gb)
@@ -83,12 +87,13 @@ def make_move_user(gb, player1):
         continue
 
 
-#find vacant positions in a list
+# find vacant positions in a list
 def find_freespots(mylist) :
     freespots = [i for i in mylist if isinstance(i, int)]
     return freespots
 
 
+# program move
 def make_move_comp(player1, player2, gb, dims):
     print("\nMy turn!")
 # try to win
@@ -109,7 +114,7 @@ def make_move_comp(player1, player2, gb, dims):
             return
 # otherwise make move in the same dimension (row, column, diagonal) where you already have moves and no player 1 moves
     for i in range(int(len(dims))):
-        if (    dims[i].count(player2) == ms-1
+        if (    dims[i].count(player2) > 0
             and dims[i].count(player1) == 0):
             position = random.choice(find_freespots(dims[i]))-1
             gb[position] = player2
@@ -121,6 +126,7 @@ def make_move_comp(player1, player2, gb, dims):
     display_board(gb)
 
 
+# check if there is a winner, return winner sing (X/O)
 def check_winner(dims):
     for i in range (int(len(dims))):
         if dims[i].count(player1) == ms:
@@ -139,7 +145,7 @@ def check_tie(gb):
     else:
         return False
 
-
+# check if tie or winner return true
 def end_game():
     while (check_tie(gb) == True
         or check_winner(dimensions(gb))!= False):
@@ -149,7 +155,7 @@ def end_game():
     else:
         return False
 
-
+# if win or a tie let user play again
 def play_again():
     global gb
     while True:
@@ -166,19 +172,23 @@ def play_again():
             print("Invalid input")
             continue
 
-
+# actual game
 def play_game(p1, p2):
     while True:
         if p1 == "X":
                 make_move_user(gb, p1)
-                end_game()
+                if end_game() == True:
+                    break
                 make_move_comp(p1, p2, gb, dimensions(gb))
-                end_game()
+                if end_game() == True:
+                    break
         elif p2 == "X":
                 make_move_comp(p1, p2, gb, dimensions(gb))
-                end_game()
+                if end_game() == True:
+                    break
                 make_move_user(gb, p1)
-                end_game()
+                if end_game() == True:
+                    break
 
 
 play_game(player1, player2)
