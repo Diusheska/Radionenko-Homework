@@ -124,70 +124,78 @@ def make_move_comp(player1, player2, gb, dims):
 def check_winner(dims):
     for i in range (int(len(dims))):
         if dims[i].count(player1) == ms:
-            return player1
+            print ("We've got a winner! And the winner is",player1)
             return
         elif (dims[i].count(player2)) == ms:
-            return player2
+            print ("We've got a winner! And the winner is",player2)
             return
-    return "none"
+    return False
 
 # check for the tie
 def check_tie(gb):
     if sum(1 for m in gb if m in board) == 0:
-        return True
         print("Oooops! There is a tie!")
+        return True
     else:
         return False
 
 while True:
-    if check_winner(dimensions(gb)) != "none":
-        print("\nHaroo! We've got a winner! And the winner is",check_winner(dimensions(gb)))
+    if check_winner(dimensions(gb)) != False:
         inp = input("Wanna play again? Type Y for 'yes' or N for 'no':\n").upper()
         if inp == "N":
             break
-        if inp == "Y":
+        elif inp == "Y":
             gb = []
             for i in board:
                 gb.append(i)
             print("Don't forget - you are",player1,"and I am",player2)
             continue
+        else:
+            print("\n'",inp,"'", "doesn't answer my question, sorry.")
+            continue
     elif check_tie(gb) == True:
-        print("\nOoops! There is a tie!")
         inp = input("Wanna play again? Type Y for 'yes' or N for 'no':\n").upper()
         if inp == "N":
             break
-        if inp == "Y":
+        elif inp == "Y":
             gb = []
             for i in board:
                 gb.append(i)
             print("Don't forget - you are",player1,"and I am",player2)
+            continue
+        else:
+            print("\n'",inp,"'", "doesn't answer my question, sorry.")
             continue
     else:
         if player1 == "X":
             make_move_user(gb, player1)
         else:
             make_move_comp(player1, player2, gb, dimensions(gb))
-    if check_winner(dimensions(gb)) != "none":
-        print("\nHaroo! We've got a winner! And the winner is",check_winner(dimensions(gb)))
+    if check_winner(dimensions(gb)) != False:
         inp = input("Wanna play again? Type Y for 'yes' or N for 'no':\n").upper()
         if inp == "N":
             break
-        if inp == "Y":
+        elif inp == "Y":
             gb = []
             for i in board:
                 gb.append(i)
             print("Don't forget - you are",player1,"and I am",player2)
             continue
+        else:
+            print("\n'",inp,"'", "doesn't answer my question, sorry.")
+            continue
     elif check_tie(gb) == True:
-        print("\nOoops! There is a tie!")
         inp = input("Wanna play again? Type Y for 'yes' or N for 'no':\n").upper()
         if inp == "N":
             break
-        if inp == "Y":
+        elif inp == "Y":
             gb = []
             for i in board:
                 gb.append(i)
             print("Don't forget - you are",player1,"and I am",player2)
+            continue
+        else:
+            print("\n'",inp,"'", "doesn't answer my question, sorry.")
             continue
     else:
         if player1 == "X":
