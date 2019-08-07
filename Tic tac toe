@@ -1,29 +1,34 @@
 import random
+import math
 
 board = range(1,10)
+
+# define board matrix size
+ms = int(math.sqrt(len(board)))
 
 #game board
 gb = []
 for i in board:
     gb.append(i)
 
+# game board matrix represenation
+def display_board(gb):
+    for i in range(ms):
+        print ( "|", gb[0+i*ms], "|", gb[1+i*ms], "|", gb[2+i*ms], "|")
+
 # rows, columns and diagonals of game board
 def dimensions(gb):
-    row0 = gb[0:3]
-    row1 = gb[3:6]
-    row2 = gb[6:9]
-    col0 = gb[0:9:3]
-    col1 = gb[1:9:3]
-    col2 = gb[2:9:3]
-    diag1 = gb[0:9:4]
-    diag2 = gb[2:8:2]
+    row0 = gb[0:ms]
+    row1 = gb[ms:ms*2]
+    row2 = gb[ms*2:ms*3]
+    col0 = gb[0:(ms**2):ms]
+    col1 = gb[1:(ms**2):ms]
+    col2 = gb[2:(ms**2):ms]
+    diag1 = gb[0:(ms**2):(ms+1)]
+    diag2 = gb[(ms-1):(ms**2-1):(ms-1)]
     dims = [row0, row1, row2, col0, col1, col2, diag1, diag2]
     return dims
 
-# game board matrix represenation
-def display_board(gb):
-    for i in range(3):
-        print ( "|", gb[0+i*3], "|", gb[1+i*3], "|", gb[2+i*3], "|")
 
 print ("Hi! Let's play tic tac toe! Here is our game board:\n")
 display_board(gb)
@@ -46,7 +51,7 @@ def set_player():
             else:
                 print("You can only select X or O.")
                 continue
-        print ("\nThanks! You will play with ", player1, ", "  "and I will be ", player2, ". The player with X goes first")
+        print ("Thanks! You will play with",player1,", "  "and I will be", player2,". The player with X goes first")
         return (player1, player2)
 
 player1, player2 = set_player()
@@ -87,31 +92,45 @@ def find_freespots(mylist) :
 def make_move_comp(player1, player2, gb, dims):
     print("\nMy turn!")
 # try to win
-    for i in range(0,8):
-        if (    dims[i].count(player2) == 2
+    for i in range(int(len(dims))):
+        if (    dims[i].count(player2) == ms-1
             and dims[i].count(player1) == 0):
             position = random.choice(find_freespots(dims[i]))-1
             gb[position] = player2
             display_board(gb)
+            print(dimensions(gb))
             return
-        elif (    dims[i].count(player2) == 1
+# prevent player1 from winning
+    for i in range(int(len(dims))):
+        if (    dims[i].count(player1) == ms-1
+            and dims[i].count(player2) == 0):
+            position = random.choice(find_freespots(dims[i]))-1
+            gb[position] = player2
+            display_board(gb)
+            print(dimensions(gb))
+            return
+# otherwise make move in the same dimension (row, column, diagonal) where you already have moves and no player 1 moves
+    for i in range(int(len(dims))):
+        if (    dims[i].count(player2) == ms-1
             and dims[i].count(player1) == 0):
             position = random.choice(find_freespots(dims[i]))-1
             gb[position] = player2
             display_board(gb)
+            print(dimensions(gb))
             return
 # otherwise position your moves randomly
     position = random.choice(find_freespots(gb))-1
     gb[position] = player2
     display_board(gb)
+    print(dimensions(gb))
 
 
 def check_winner(dims):
-    for i in range (0,8):
-        if dims[i].count(player1) == 3:
+    for i in range (int(len(dims))):
+        if dims[i].count(player1) == ms:
             return player1
             return
-        elif (dims[i].count(player2)) == 3:
+        elif (dims[i].count(player2)) == ms:
             return player2
             return
     return "none"
@@ -164,6 +183,7 @@ while True:
             print("Don't forget - you are",player1,"and I am",player2)
             continue
     elif check_tie(gb) == True:
+        print("\nOoops! There is a tie!")
         inp = input("Wanna play again? Type Y for 'yes' or N for 'no':\n").upper()
         if inp == "N":
             break
@@ -171,7 +191,7 @@ while True:
             gb = []
             for i in board:
                 gb.append(i)
-            print("Don't forget - you are",player1,"and I am",player2) 
+            print("Don't forget - you are",player1,"and I am",player2)
             continue
     else:
         if player1 == "X":
