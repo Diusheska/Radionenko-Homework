@@ -152,42 +152,43 @@ def end_game():
         print("\nWanna play again?")
         play_again()
         return True
+        break
     else:
         return False
 
-# if win or a tie let user play again
+# if win or a tie, let user play again
 def play_again():
     global gb
     while True:
         inp = input("Type Y for 'yes' or N for 'no':\n").upper()
-        if inp == "Y":
+        if inp == "N":
+            break
+        elif inp == "Y":
             gb = []
             for i in board:
                 gb.append(i)
             player1, player2 = set_player()
             play_game(player1, player2)
-        elif inp == "N":
-            break
         else:
             print("Invalid input")
             continue
-
+    return
 # actual game
 def play_game(p1, p2):
     while True:
         if p1 == "X":
                 make_move_user(gb, p1)
-                if end_game() == True:
+                if end_game():
                     break
                 make_move_comp(p1, p2, gb, dimensions(gb))
-                if end_game() == True:
+                if end_game():
                     break
         elif p2 == "X":
                 make_move_comp(p1, p2, gb, dimensions(gb))
-                if end_game() == True:
+                if end_game():
                     break
                 make_move_user(gb, p1)
-                if end_game() == True:
+                if end_game():
                     break
 
 
