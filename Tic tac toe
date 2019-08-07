@@ -98,7 +98,6 @@ def make_move_comp(player1, player2, gb, dims):
             position = random.choice(find_freespots(dims[i]))-1
             gb[position] = player2
             display_board(gb)
-            print(dimensions(gb))
             return
 # prevent player1 from winning
     for i in range(int(len(dims))):
@@ -107,7 +106,6 @@ def make_move_comp(player1, player2, gb, dims):
             position = random.choice(find_freespots(dims[i]))-1
             gb[position] = player2
             display_board(gb)
-            print(dimensions(gb))
             return
 # otherwise make move in the same dimension (row, column, diagonal) where you already have moves and no player 1 moves
     for i in range(int(len(dims))):
@@ -116,13 +114,11 @@ def make_move_comp(player1, player2, gb, dims):
             position = random.choice(find_freespots(dims[i]))-1
             gb[position] = player2
             display_board(gb)
-            print(dimensions(gb))
             return
 # otherwise position your moves randomly
     position = random.choice(find_freespots(gb))-1
     gb[position] = player2
     display_board(gb)
-    print(dimensions(gb))
 
 
 def check_winner(dims):
