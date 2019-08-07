@@ -6,7 +6,7 @@ board = range(1,10)
 # define board matrix size
 ms = int(math.sqrt(len(board)))
 
-#game board
+# game board
 gb = []
 for i in board:
     gb.append(i)
@@ -139,67 +139,46 @@ def check_tie(gb):
     else:
         return False
 
-while True:
-    if check_winner(dimensions(gb)) != False:
-        inp = input("Wanna play again? Type Y for 'yes' or N for 'no':\n").upper()
-        if inp == "N":
-            break
-        elif inp == "Y":
-            gb = []
-            for i in board:
-                gb.append(i)
-            print("Don't forget - you are",player1,"and I am",player2)
-            continue
-        else:
-            print("\n'",inp,"'", "doesn't answer my question, sorry.")
-            continue
-    elif check_tie(gb) == True:
-        inp = input("Wanna play again? Type Y for 'yes' or N for 'no':\n").upper()
-        if inp == "N":
-            break
-        elif inp == "Y":
-            gb = []
-            for i in board:
-                gb.append(i)
-            print("Don't forget - you are",player1,"and I am",player2)
-            continue
-        else:
-            print("\n'",inp,"'", "doesn't answer my question, sorry.")
-            continue
+
+def end_game():
+    while (check_tie(gb) == True
+        or check_winner(dimensions(gb))!= False):
+        print("\nWanna play again?")
+        play_again()
+        return True
     else:
-        if player1 == "X":
-            make_move_user(gb, player1)
-        else:
-            make_move_comp(player1, player2, gb, dimensions(gb))
-    if check_winner(dimensions(gb)) != False:
-        inp = input("Wanna play again? Type Y for 'yes' or N for 'no':\n").upper()
-        if inp == "N":
-            break
-        elif inp == "Y":
+        return False
+
+
+def play_again():
+    global gb
+    while True:
+        inp = input("Type Y for 'yes' or N for 'no':\n").upper()
+        if inp == "Y":
             gb = []
             for i in board:
                 gb.append(i)
-            print("Don't forget - you are",player1,"and I am",player2)
-            continue
-        else:
-            print("\n'",inp,"'", "doesn't answer my question, sorry.")
-            continue
-    elif check_tie(gb) == True:
-        inp = input("Wanna play again? Type Y for 'yes' or N for 'no':\n").upper()
-        if inp == "N":
+            player1, player2 = set_player()
+            play_game(player1, player2)
+        elif inp == "N":
             break
-        elif inp == "Y":
-            gb = []
-            for i in board:
-                gb.append(i)
-            print("Don't forget - you are",player1,"and I am",player2)
-            continue
         else:
-            print("\n'",inp,"'", "doesn't answer my question, sorry.")
+            print("Invalid input")
             continue
-    else:
-        if player1 == "X":
-            make_move_comp(player1, player2, gb, dimensions(gb))
-        else:
-            make_move_user(gb, player1)
-        continue
+
+
+def play_game(p1, p2):
+    while True:
+        if p1 == "X":
+                make_move_user(gb, p1)
+                end_game()
+                make_move_comp(p1, p2, gb, dimensions(gb))
+                end_game()
+        elif p2 == "X":
+                make_move_comp(p1, p2, gb, dimensions(gb))
+                end_game()
+                make_move_user(gb, p1)
+                end_game()
+
+
+play_game(player1, player2)
