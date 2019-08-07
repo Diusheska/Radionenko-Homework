@@ -159,7 +159,8 @@ def end_game():
 # if win or a tie, let user play again
 def play_again():
     global gb
-    while True:
+    inp = ""
+    while not (inp == "Y" or inp == "N"):
         inp = input("Type Y for 'yes' or N for 'no':\n").upper()
         if inp == "N":
             break
