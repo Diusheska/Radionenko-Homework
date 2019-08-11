@@ -93,6 +93,6 @@ def play_game():
     while not check_win(word):
         try_to_guess()
     else:
-        print("\nYes! I did! I'm a very smart computer! It took me {} attempts".format(attempts))
+        print("\nI did it! I'm a very smart computer! It took me {} attempts".format(attempts))
 
 play_game()
