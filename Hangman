@@ -1,0 +1,110 @@
+import codecs
+import collections
+import itertools
+from collections import Counter
+from functools import reduce
+
+
+# open file, switch to lower and get rid of paragraph breaks
+with codecs.open(r'hangman_list.txt', encoding='utf-8') as f_obj:
+    text = f_obj.read().lower()
+    textlist = text.splitlines()
+
+# calculate number of letters in the text: this will be used for % calculation later
+textlength = int(len(text))
+
+# show most frequent character for specific list of words
+def cnt_char(l):
+    cnt = Counter()
+    for i in l:
+        for c in i:
+            while c not in (word):
+                cnt[c]+=1
+                break
+    cd = dict(cnt.most_common(1))
+    for c in cd:
+        return c
+
+
+# ask user for number of letters
+wl = int(input("How many letters does your word have?\n"))
+word = ["-"]*wl
+
+# display how the word looks like
+def show_word(w):
+    print("This is how the word looks now:")
+    print(' '.join(map(str, w)))
+
+show_word(word)
+
+# check if there are still any unknown letters in the word:
+def check_win():
+    if word.count("-") == 0:
+        return True
+        print("Yes! I did! I'm a very smart computer! It took me {} attempts".format(attempts))
+    else:
+        return False
+
+# ask for the 1st letter hint
+inplet = input("\nAny letter prompts? Just type the letter and hit Enter:\n")
+
+# list of words filtered based on users answers
+f = list(filter(lambda x: int(len(x)) == wl, textlist))
+
+# count number of attempts
+attempts = 0
+
+# if letter is correct, ask for and set the position of the letter in word
+def set_position(letter):
+    global f
+    while True:
+        inppos = int(input("Please type letter position in the word:\n"))
+        word[inppos-1] = letter
+        show_word(word)
+        f = list(filter(lambda x: (int(len(x)) == wl and x[inppos-1] == inplet), f))
+        print(f)
+        inpopt = input("More occurances of this letter in the word? Type Y/N: \n").upper()
+        if inpopt == "N":
+            return inppos
+            break
+        else:
+            continue
+
+
+inppos = set_position(inplet)
+
+def try_to_guess():
+    global attempts
+    global f
+# find most used character from filtered list:
+    c = cnt_char(f)
+    print("My next guess is '&",c)
+    attempts += 1
+    print(attempts)
+    inplet2 = input("Is it in your word? Type Y/N:\n").upper()
+    if inplet2 == "Y":
+        while True:
+            inppos2 = int(input("Type letter position in the word:\n"))
+            word[inppos2-1] = c
+            show_word(word)
+            f = list(filter(lambda x: x[inppos2-1] == c, f))
+            print(f)
+            if check_win():
+                break
+            else:
+                inpopt = input("More occurances of this letter in the word? Type Y/N: \n").upper()
+                if inpopt == "N":
+                    f = list(filter(lambda x: x[inppos2-1] == c, f))
+                    print(f)
+                    break
+                else:
+                    continue
+    elif inplet2 == "N":
+# filter out words with this letter from the list
+        f = list(filter(lambda w: any([char != c for char in w]), f))
+        print(f)
+
+try_to_guess()
+
+
+print(check_win())
