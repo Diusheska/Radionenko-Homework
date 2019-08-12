@@ -17,9 +17,6 @@ with codecs.open(file_path, encoding='utf-8') as f_obj:
     text = f_obj.read().lower()
     textlist = text.splitlines()
 
-# define all letters or symbols from the text
-allowed = ''.join(textlist)
-
 # find max possible length of the word in file
 ml = (max(list(map(lambda x: int(len(x)), textlist))))
 
