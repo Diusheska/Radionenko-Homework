@@ -2,10 +2,18 @@ import codecs
 import re
 from collections import Counter
 from functools import reduce
+import tkinter as tk
+from tkinter import filedialog
 
+root = tk.Tk()
+root.withdraw()
+
+print("Please select a file to open")
+
+file_path = filedialog.askopenfilename()
 
 # open file, switch to lower and get rid of paragraph breaks
-with codecs.open(r'hangman_list.txt', encoding='utf-8') as f_obj:
+with codecs.open(file_path, encoding='utf-8') as f_obj:
     text = f_obj.read().lower()
     textlist = text.splitlines()
 
@@ -126,6 +134,7 @@ def try_to_guess():
             continue
         else:
             print("Sorry, such word doesn't exist in our disctionary. I give up")
+
 
 # actual game
 def play_game():
