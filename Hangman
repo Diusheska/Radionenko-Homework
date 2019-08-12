@@ -1,13 +1,36 @@
 import codecs
+import re
 from collections import Counter
+from functools import reduce
+
 
 # open file, switch to lower and get rid of paragraph breaks
 with codecs.open(r'hangman_list.txt', encoding='utf-8') as f_obj:
     text = f_obj.read().lower()
     textlist = text.splitlines()
 
+# define all letters or symbols from the text
+allowed = ''.join(textlist)
+
+# find max possible length of the word in file
+ml = (max(list(map(lambda x: int(len(x)), textlist))))
+
 # ask user for number of letters
-wl = int(input("Hi user! Let's play Hangman! How many letters does your word have?\n"))
+print("Hi user! Let's play Hangman game!\n")
+while True:
+    try:
+        wl = int(input("How many letters does your word have?\n"))
+    except ValueError:
+        print("This is not an integer\n")
+        continue
+    else:
+# check if user input is in within word length
+        if 0 < wl <= ml:
+            break
+        else:
+            print("Value is out of range.\n")
+            continue
+
 word = ["-"]*wl
 # count number of game attempts
 attempts = 0
@@ -22,6 +45,18 @@ show_word(word)
 # list of words filtered based on user's answer
 f = list(filter(lambda x: int(len(x)) == wl, textlist))
 
+# count total characters quantity in the filtered list except for letters already known
+def filter_length(lst):
+    cnt = Counter()
+    for w in lst:
+        for char in w:
+            while char in word:
+                cnt[char]+=1
+                break
+    fl = reduce(lambda x, y: x+y, list(map(lambda x: int(len(x)), lst))) - sum(cnt.values())
+    return fl
+
+
 # show most frequent character for specific list of words
 def cnt_char(lst):
     cnt = Counter()
@@ -31,68 +66,77 @@ def cnt_char(lst):
                 cnt[char]+=1
                 break
     cd = dict(cnt.most_common(1))
-    for char in cd:
-        return char
+    for char, freq in cd.items():
+        freq = int(freq)
+        return char, freq
 
 # check if there are still any unknown letters in the word:
 def check_win(word):
     if word.count("-") == 0:
-        return True        
+        return True
     else:
         return False
 
 # if letter is correct, ask for and set the position of the letter in word
 def user_prompt():
     global f
+    global word
     # ask for the 1st letter hint
-    inplet = input("\nAny letter prompts? Type any letter from your word and hit Enter:\n")
-# check whether this word is in list of words?
-    while True:
-        inppos = int(input("\nType letter position in the word:\n"))
-        word[inppos-1] = inplet
-        show_word(word)
-        f = list(filter(lambda x: x[inppos-1] == inplet, f))
-        inpopt = input("\nMore occurances of this letter in the word? Type Y/N: \n").upper()
-        if inpopt == "N":
-            return inppos
+    while not (f == []):
+        print ("\nAny letter prompts? Type your word with letter(s) and '-' in it and hit Enter:")
+        inp = input()
+        if int(len(inp)) == wl:
+            word = inp
+            inp = inp.replace("-", ".")
+            r = re.compile(inp)
+            f = list(filter(r.match, f))
             break
         else:
+            print("Sorry, this doesn't match your word length. Please try again:\n")
             continue
+    else:
+        print("Sorry, such word doesn't exist in our dictionary. I give up.")
+
 
 # computer tries to guess the letter:
 def try_to_guess():
     global attempts
+    global word
     global f
 # find most used character from filtered list:
-    char = cnt_char(f)
-    print("\nMy next guess is '{}'".format(char))
+    char, freq = cnt_char(f)
+    fl = filter_length(f)
+    print("\nMy next guess is '{}'.".format(char),"Its probability is {0:.0%}.".format(freq/fl))
     attempts += 1
-    inp = input("Is it in your word? Type Y/N:\n").upper()
-    if inp == "Y":
-        while True:
-            inppos = int(input("\nType letter position in the word:\n"))
-            word[inppos-1] = char
-            show_word(word)
-            f = list(filter(lambda x: x[inppos-1] == char, f))
-            if check_win(word):
-                break
-            else:
-                inpopt = input("\nMore occurances of this letter in the word? Type Y/N: \n").upper()
-                if inpopt == "N":
-                    f = list(filter(lambda x: x[inppos-1] == char, f))
-                    break
-                else:
-                    continue
-    elif inp == "N":
+    inp = input("Is it in your word? Type the word with this letter(s) in OR type 'N' for 'no'\n").lower()
+    if inp == "n":
 # filter out words with this letter from the list
         f = list(filter(lambda w: all([letter != char for letter in w]), f))
+    else:
+        while not (f==[]):
+            if int(len(inp)) == wl:
+                word = inp
+                inpt = inp.replace("-", ".")
+                r = re.compile(inpt)
+                f = list(filter(r.match, f))
+                break
+            else:
+                print("Sorry, this doesn't match your word length. Please try again:\n")
+                break
+            continue
+        else:
+            print("Sorry, such word doesn't exist in our disctionary. I give up")
 
 # actual game
 def play_game():
     user_prompt()
-    while not check_win(word):
+    while not (check_win(word) or f == []):
         try_to_guess()
     else:
-        print("\nI did it! I'm a very smart computer! It took me {} attempts".format(attempts))
+        if f == []:
+           print("Sorry, such word doesn't exist in our dictionary. I give up.")
+        elif check_win(word):
+            print("\nI did it! I'm a very smart computer! It took me {} attempts".format(attempts))
+
 
 play_game()
