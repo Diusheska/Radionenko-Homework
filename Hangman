@@ -5,14 +5,14 @@ from functools import reduce
 import tkinter as tk
 from tkinter import filedialog
 
-root = tk.Tk()
-root.withdraw()
 
-print("Please select a file to open")
+print("Hi! Please select a file to open\n")
 
+# give user an option to browse for the file
+root = tk.Tk().withdraw()
 file_path = filedialog.askopenfilename()
 
-# open file, switch to lower and get rid of paragraph breaks
+# open file and switch to lower
 with codecs.open(file_path, encoding='utf-8') as f_obj:
     text = f_obj.read().lower()
     textlist = text.splitlines()
@@ -20,8 +20,8 @@ with codecs.open(file_path, encoding='utf-8') as f_obj:
 # find max possible length of the word in file
 ml = (max(list(map(lambda x: int(len(x)), textlist))))
 
-# ask user for number of letters
-print("Hi user! Let's play Hangman game!\n")
+# ask user for the number of letters in his/her word
+print("Now let's play! Select a word from the file and give me few hints.")
 while True:
     try:
         wl = int(input("How many letters does your word have?\n"))
@@ -33,10 +33,12 @@ while True:
         if 0 < wl <= ml:
             break
         else:
-            print("Value is out of range.\n")
+            print("Sorry, no such words in your file\n")
             continue
 
+# define word display
 word = ["-"]*wl
+
 # count number of game attempts
 attempts = 0
 
@@ -47,6 +49,7 @@ def show_word(w):
 
 # call function to show the word at the beginning
 show_word(word)
+
 # list of words filtered based on user's answer
 f = list(filter(lambda x: int(len(x)) == wl, textlist))
 
@@ -61,8 +64,7 @@ def filter_length(lst):
     fl = reduce(lambda x, y: x+y, list(map(lambda x: int(len(x)), lst))) - sum(cnt.values())
     return fl
 
-
-# show most frequent character for specific list of words
+# show the most frequent character for specific list of words
 def cnt_char(lst):
     cnt = Counter()
     for w in lst:
@@ -82,13 +84,13 @@ def check_win(word):
     else:
         return False
 
-# if letter is correct, ask for and set the position of the letter in word
+# sdk user for first letter prompt and update the filtered list based on this prompt
 def user_prompt():
     global f
     global word
-    # ask for the 1st letter hint
+    # ask for the any letter hint
+    print ("\nAny letter prompts? Type your word with letter(s) and '-' in it and hit Enter:")
     while not (f == []):
-        print ("\nAny letter prompts? Type your word with letter(s) and '-' in it and hit Enter:")
         inp = input()
         if int(len(inp)) == wl:
             word = inp
@@ -97,23 +99,22 @@ def user_prompt():
             f = list(filter(r.match, f))
             break
         else:
-            print("Sorry, this doesn't match your word length. Please try again:\n")
+            print("Sorry, this doesn't match your word length. Please try again:")
             continue
     else:
         print("Sorry, such word doesn't exist in our dictionary. I give up.")
 
-
 # computer tries to guess the letter:
 def try_to_guess():
-    global attempts
-    global word
     global f
-# find most used character from filtered list:
+    global word
+    global attempts
+# find the most frequent character from filtered list:
     char, freq = cnt_char(f)
     fl = filter_length(f)
-    print("\nMy next guess is '{}'.".format(char),"Its probability is {0:.0%}.".format(freq/fl))
+    print("\nThanks! I guess there could be '{}' in your word.".format(char),"Its probability is {0:.0%}.".format(freq/fl))
     attempts += 1
-    inp = input("Is it in your word? Type the word with this letter(s) in OR type 'N' for 'no'\n").lower()
+    inp = input("Is it there? Type the word with this letter(s) in OR type 'N' for 'no'\n").lower()
     if inp == "n":
 # filter out words with this letter from the list
         f = list(filter(lambda w: all([letter != char for letter in w]), f))
@@ -132,7 +133,6 @@ def try_to_guess():
         else:
             print("Sorry, such word doesn't exist in our disctionary. I give up")
 
-
 # actual game
 def play_game():
     user_prompt()
@@ -143,6 +143,5 @@ def play_game():
            print("Sorry, such word doesn't exist in our dictionary. I give up.")
         elif check_win(word):
             print("\nI did it! I'm a very smart computer! It took me {} attempts".format(attempts))
-
 
 play_game()
