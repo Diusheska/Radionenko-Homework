@@ -1,21 +1,27 @@
 import codecs
 import re
+import tkinter as tk
 from collections import Counter
 from functools import reduce
-import tkinter as tk
+from itertools import chain
 from tkinter import filedialog
 
 
 print("Hi! Please select a file to open\n")
 
-# give user an option to browse for the file
-root = tk.Tk().withdraw()
-file_path = filedialog.askopenfilename()
-
-# open file and switch to lower
-with codecs.open(file_path, encoding='utf-8') as f_obj:
-    text = f_obj.read().lower()
-    textlist = text.splitlines()
+# give user an option to browse for file. Open file, read, switch to lower
+while True:
+    try:
+        root = tk.Tk().withdraw()
+        file_path = filedialog.askopenfilename()
+        with codecs.open(file_path, encoding='utf-8') as f_obj:
+            text = f_obj.read().lower()
+    except FileNotFoundError:
+        print("No file or file path\n")
+        continue
+    else:
+        textlist = text.splitlines()
+        break
 
 # find max possible length of the word in file
 ml = (max(list(map(lambda x: int(len(x)), textlist))))
@@ -55,25 +61,15 @@ f = list(filter(lambda x: int(len(x)) == wl, textlist))
 
 # count total characters quantity in the filtered list except for letters already known
 def filter_length(lst):
-    cnt = Counter()
-    for w in lst:
-        for char in w:
-            while char in word:
-                cnt[char]+=1
-                break
-    fl = reduce(lambda x, y: x+y, list(map(lambda x: int(len(x)), lst))) - sum(cnt.values())
+    known_letters = list(filter(lambda x: x in word, (list(chain.from_iterable(lst)))))
+    fl = reduce(lambda x, y: x+y, list(map(lambda x: int(len(x)), lst))) - len(known_letters) # we only care about quantity of unguessed letters in the filtered list
     return fl
 
 # show the most frequent character for specific list of words
 def cnt_char(lst):
-    cnt = Counter()
-    for w in lst:
-        for char in w:
-            while char not in (word):
-                cnt[char]+=1
-                break
-    cd = dict(cnt.most_common(1))
-    for char, freq in cd.items():
+    unknown_letters = list(filter(lambda x: x not in word, (list(chain.from_iterable(lst)))))
+    cnt = dict(Counter(unknown_letters).most_common(1))
+    for char, freq in cnt.items():
         freq = int(freq)
         return char, freq
 
