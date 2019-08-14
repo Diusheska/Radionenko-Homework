@@ -1,9 +1,10 @@
 import codecs
 import re
-import operator
 import tkinter as tk
-from tkinter import filedialog
+import operator
 from itertools import chain
+from tkinter import filedialog
+
 
 print("Hi! Please select a file to open\n")
 
@@ -25,23 +26,19 @@ while True:
 ml = (max(list(map(lambda x: int(len(x)), textlist))))
 
 # ask user for the number of letters in his/her word
-print("Now let's play! Select a word from the file and give me few hints.")
+print("Now let's play! Select a word from the file you've uploaded.")
 while True:
-    try:
-        wl = int(input("How many letters does your word have?\n"))
-    except ValueError:
-        print("This is not an integer\n")
-        continue
+    inp = input("Type your word with '-' instead of letters (i.e. cat -> --- etc)\n")
+    word_length = int(len(inp))
+# check if user input is in within word lengt
+    if 0 < word_length <= ml:
+        break
     else:
-# check if user input is in within word length
-        if 0 < wl <= ml:
-            break
-        else:
-            print("Sorry, no such words in your file\n")
-            continue
+        print("Sorry, no such words in your file\n")
+        continue
 
 # define word display
-word = ["-"]*wl
+word = ["-"]*word_length
 
 # count number of game attempts
 attempts = 0
@@ -51,11 +48,8 @@ def show_word(w):
     print("\nThis is how the word looks now:")
     print(' '.join(map(str, w)))
 
-# call function to show the word at the beginning
-show_word(word)
-
 # list of words filtered based on user's answer
-f = list(filter(lambda x: int(len(x)) == wl, textlist))
+f = list(filter(lambda x: int(len(x)) == word_length, textlist))
 
 # count number of words in the filtered list
 def filter_length(lst):
@@ -75,26 +69,6 @@ def letter_occurances(lst):
     freq = dictionary[guess]
     return guess, freq
 
-# sdk user for first letter prompt and update the filtered list based on this prompt
-def user_prompt():
-    global f
-    global word
-    # ask for the any letter hint
-    print ("\nAny letter prompts? Type your word with letter(s) and '-' in it and hit Enter:")
-    while not (f == []):
-        inp = input()
-        if int(len(inp)) == wl:
-            word = inp
-            inp = inp.replace("-", ".")
-            r = re.compile(inp)
-            f = list(filter(r.match, f))
-            break
-        else:
-            print("Sorry, this doesn't match your word length. Please try again:")
-            continue
-    else:
-        print("Sorry, such word doesn't exist in our dictionary. I give up.")
-
 # computer tries to guess the letter:
 def try_to_guess():
     global f
@@ -109,7 +83,7 @@ def try_to_guess():
     # filter out words with this letter from the list
             f = list(filter(lambda w: all([letter != guess for letter in w]), f))
         else:
-            if int(len(inp)) == wl:
+            if int(len(inp)) == word_length:
                 word = inp
                 inpt = inp.replace("-", ".")
                 r = re.compile(inpt)
@@ -128,8 +102,4 @@ def try_to_guess():
             print("I know the word! It's '{}', right?".format(''.join(f)),"It took me {} attempt(s)".format(attempts))
 
 # actual game
-def play_game():
-    user_prompt()
-    try_to_guess()
-
-play_game()
+try_to_guess()
