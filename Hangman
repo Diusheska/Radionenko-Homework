@@ -30,7 +30,7 @@ print("Now let's play! Select a word from the file you've uploaded.")
 while True:
     inp = input("Type your word with '-' instead of letters (i.e. cat -> --- etc)\n")
     word_length = int(len(inp))
-# check if user input is in within word lengt
+# check if user input is within 0 and max word length in the file
     if 0 < word_length <= ml:
         break
     else:
@@ -50,11 +50,6 @@ def show_word(w):
 
 # list of words filtered based on user's answer
 f = list(filter(lambda x: int(len(x)) == word_length, textlist))
-
-# count number of words in the filtered list
-def filter_length(lst):
-    fl = int(len(lst)) # total number of words in the filtered list
-    return fl
 
 # show letters those occur in majority of words
 def letter_occurances(lst):
