@@ -1,10 +1,9 @@
 import codecs
 import re
-import tkinter as tk
 import operator
-from itertools import chain
+import tkinter as tk
 from tkinter import filedialog
-
+from itertools import chain
 
 print("Hi! Please select a file to open\n")
 
@@ -122,11 +121,11 @@ def try_to_guess():
     else:
         if f == []:
             print("Sorry, such word doesn't exist. Game over, I give up!")
-        elif int(len(f)) == 1:
-            print("I know the word! It's '{}', right?".format(''.join(f)),"It took me {} attempt(s)".format(attempts))
         elif  word.count("-") == 0:
             print("I did it! It took me {} attempt(s)".format(attempts))
             show_word(word)
+        elif int(len(f)) == 1:
+            print("I know the word! It's '{}', right?".format(''.join(f)),"It took me {} attempt(s)".format(attempts))
 
 # actual game
 def play_game():
