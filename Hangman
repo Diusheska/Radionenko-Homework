@@ -1,9 +1,9 @@
 import codecs
 import re
-import tkinter as tk
 import operator
-from itertools import chain
+import tkinter as tk # this and following module are imported to give user a file-path hint
 from tkinter import filedialog
+from itertools import chain
 
 
 print("Hi! Please select a file to open\n")
@@ -58,47 +58,51 @@ def filter_length(lst):
 
 # show letters those occur in majority of words
 def letter_occurances(lst):
-    unknown_letters = set(list(filter(lambda x: x not in word, (list(chain.from_iterable(lst))))))
+    unknown_letters = set(list(filter(lambda x: x not in word, (list(chain.from_iterable(lst)))))) # creates a set of non-guessed yet letters from the list of filtered words
     occurances = []
     for letter in unknown_letters:
         r = re.compile(".*{}".format(letter))
         matched = len(list(filter(r.match, f)))
-        occurances.append(matched)
-    dictionary = dict(zip(unknown_letters, occurances))
-    guess = max(dictionary.items(), key=operator.itemgetter(1))[0]
+        occurances.append(matched) # occurances = list of word counts per each non-guessed yet letter. I.e. we have 2 unguessed letters: a and z. A appears in 1 word, z in 3 words. Occurances list will show [1, 3]
+    dictionary = dict(zip(unknown_letters, occurances)) # disctionary of unguessed letters as keys and number of words where they occur as values
+    guess = max(dictionary.items(), key=operator.itemgetter(1))[0] # find unguessed letter with the max number of words where it occurs
     freq = dictionary[guess]
-    return guess, freq
+    return guess, freq # guess = letter which occurs in majority if words, freq = number of words this letter is in
 
 # computer tries to guess the letter:
 def try_to_guess():
     global f
     global word
     global attempts
+# f == [] means filtered list is empty: no matches with given letters and legth; 
+# len(f) = 1 means there is single word satisying all given conditions - return the whole word, no point in further guesses    
+# word.count("-") == 0 - means computer won. No more unknown ("-") letters in the word
     while not (f == [] or int(len(f)) == 1 or word.count("-") == 0):
         guess, freq = letter_occurances(f)
         print("\nThanks! I guess there could be '{}' in your word.".format(guess),"It is in {} word(s)".format(freq),"out of {}".format(len(f)), "with probability of {0:.0%}.".format(freq/(int(len(f)))))
         attempts += 1
         inp = input("Is it there? Type the word with this letter(s) in OR type 'N' for 'no'\n").lower()
         if inp == "n":
-    # filter out words with this letter from the list
+# filter out words with this letter from the list, as we know now it's not in the word
             f = list(filter(lambda w: all([letter != guess for letter in w]), f))
         else:
             if int(len(inp)) == word_length:
                 word = inp
                 inpt = inp.replace("-", ".")
                 r = re.compile(inpt)
-                f = list(filter(r.match, f))
+                f = list(filter(r.match, f)) # update filtered list based on guessed letter: now it will only contain words matching regex patter (=having this letter on this position)
+# if length of input != word_length it means user have mistakenly inputted smth wrong or tries to cheat with us
             else:
                 print("Sorry, this doesn't match your word length. Please try again:\n")
                 break
                 continue
     else:
         if f == []:
-            print("Sorry, such word doesn't exist. Game over, I give up!")
-        elif  word.count("-") == 0:
+            print("Sorry, such word doesn't exist. Game over, I give up!") # f == [] means filtered list is empty: no matches with given letters and legth;
+        elif  word.count("-") == 0: # word.count("-") == 0 - means computer won. No more unknown ("-") letters in the word
             print("I did it! It took me {} attempt(s)".format(attempts))
             show_word(word)
-        elif int(len(f)) == 1:
+        elif int(len(f)) == 1: # len(f) = 1 means there is single word satisying all given conditions - return the whole word, no point in further guesses    
             print("I know the word! It's '{}', right?".format(''.join(f)),"It took me {} attempt(s)".format(attempts))
 
 # actual game
