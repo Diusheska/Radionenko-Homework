@@ -76,7 +76,7 @@ def try_to_guess():
     global attempts
     while not (f == [] or int(len(f)) == 1 or word.count("-") == 0):
         guess, freq = letter_occurances(f)
-        print("\nThanks! I guess there could be '{}' in your word.".format(guess),"It is in {} word(s)".format(freq), "with probability of {0:.0%}.".format(freq/(int(len(f)))))
+        print("\nThanks! I guess there could be '{}' in your word.".format(guess),"It is in {} word(s)".format(freq),"out of {}".format(len(f)), "with probability of {0:.0%}.".format(freq/(int(len(f)))))
         attempts += 1
         inp = input("Is it there? Type the word with this letter(s) in OR type 'N' for 'no'\n").lower()
         if inp == "n":
