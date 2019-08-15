@@ -22,6 +22,7 @@ while True:
         textlist = text.splitlines()
         break
 
+# identify max word length in the list. We need it to verify initial user input - if user enters more letters than max, we'll notify him
 ml = (max(list(map(lambda x: int(len(x)), textlist))))
 
 # ask user for the number of letters in his/her word
@@ -37,7 +38,7 @@ while True:
         continue
 
 word = ["-"]*word_length
-filtered_list = list(filter(lambda x: int(len(x)) == word_length, textlist))
+filtered_list = list(filter(lambda x: int(len(x)) == word_length, textlist)) # apply initial filtering of the text based on word length
 
 # display how the word looks like
 def show_word(w):
@@ -50,12 +51,12 @@ def letter_occurances(lst, word):
     occurances = []
     for letter in unknown_letters:
         r = re.compile(".*{}".format(letter))
-        matched = len(list(filter(r.match, lst)))
+        matched = len(list(filter(r.match, lst))) # number of words with this letter in a list
         occurances.append(matched) # occurances = list of word counts per each non-guessed yet letter. I.e. we have 2 unguessed letters: a and z. A appears in 1 word, z in 3 words. Occurances list will show [1, 3]
-    dictionary = dict(zip(unknown_letters, occurances)) # disctionary of unguessed letters as keys and number of words where they occur as values
+    dictionary = dict(zip(unknown_letters, occurances)) # disctionary of unguessed letters as keys and number of words where they occur as values, i.e {"a": 1, "z": 3}
     guess = max(dictionary.items(), key=operator.itemgetter(1))[0] # find unguessed letter with the max number of words where it occurs
     freq = dictionary[guess]
-    return guess, freq # guess = letter which occurs in majority if words, freq = number of words this letter is in
+    return guess, freq # guess = letter which occurs in majority of words, freq = number of words this letter is in
 
 # computer tries to guess the letter:
 def try_to_guess(guess, freq, f):
@@ -89,11 +90,11 @@ def play():
         attempts += 1
     else:
         if filtered_list == []:
-            print("Sorry, such word doesn't exist. Game over, I give up!") # f == [] means filtered list is empty: no matches with given letters and legth;
+            print("Sorry, such word doesn't exist. Game over, I give up!") # filtered_list == [] means filtered list is empty: no matches with given letters and legth;
         elif  word.count("-") == 0: # word.count("-") == 0 - means computer won. No more unknown ("-") letters in the word
             print("\nI did it! It took me {} attempt(s)".format(attempts))
             show_word(word)
-        elif int(len(filtered_list)) == 1: # len(f) = 1 means there is single word satisying all given conditions - return the whole word, no point in further guesses
+        elif int(len(filtered_list)) == 1: # len(filtered_list) = 1 means there is single word satisfying all given conditions - return the whole word, no point in further guesses
             print("\nI know the word! It's '{}', right?".format(''.join(filtered_list)),"It took me {} attempt(s)".format(attempts))
 
 play()
