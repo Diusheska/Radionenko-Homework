@@ -12,7 +12,7 @@ def check_directory():
                 modified_date = time.ctime(os.path.getmtime(os.path.join(root, filename)))
                 print ("File name: {}, size (in bytes): {}, created date: {}, last modified date: {}".format(filename, file_size, created_date, modified_date))
     else:
-        os.mkdir(full_path) # нет проверки на дурака - рассчет на то, что юхер ввел существующий диск, слєши и тп
+        os.mkdir(full_path) # нет проверки на дурака - рассчет на то, что юхер ввел существующий диск, слэши и тп
         print ("Your path didn't exist, but I just created it for you - how cool it that?")
         
         
