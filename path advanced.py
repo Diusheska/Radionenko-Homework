@@ -21,7 +21,7 @@ def check_directory():
             os.mkdir(full_path)
             print ("Your path didn't exist, but I just created it for you - how cool it that?")
         else:
-            print ("Sorry, I wanted to create a directory for you, but I need a valid drive name")
+            print ("Sorry, I wanted to create a directory for you, but there is no valid drive name in path you provided, so i give up.")
 
 
 check_directory()
