@@ -1,27 +1,27 @@
+import argparse
 import os
 
-def check_directory():
-    directory_not_found: bool = True
-    file_not_found: bool = True
-    while directory_not_found:
-        full_path = input("Please type the path to your file's directory:\n").lower()
-        if os.path.exists(full_path):
-            print("Ok, good! Such directory exists!")
-            while file_not_found:
-                file_name = os.path.join (full_path, input("Please type the file name:\n").lower())
-                if os.path.isfile(file_name):
-                    print ("Such file exists!")
-                    break
-                else:
-                    print("Sorry, no such file in the directory you've mentioned. Please check the file name and try again")
-                    continue
-            else:
-                return
-            break
-        else:
-            print ("Sorry, your path doesn't exist. Are you sure it's correct one? Let's try all over again.")
-            continue
-    else:
-        return
+def parse_path():
+	parser = argparse.ArgumentParser(
+	description='Please type the full path to directory and file name in it. The utilite will check if such directory and file in it exist')
+	parser.add_argument("full_path", help = "Full path to your file")
+	parser.add_argument("file_name", help = 'Filename (with extension) to look for in  "name.smth" format')
+	args = parser.parse_args()
+	return args
 
-check_directory()
+def search_dir (full_path, file_name):
+  if os.path.exists(full_path):
+      print("Such directory exists!")
+      file_path = os.path.join (full_path, file_name.lower())
+      if os.path.isfile(file_name):
+        print ("And such file exists as well!")
+      else:
+        print("But there is no '{}' file in it.".format(file_name))
+  else:
+      print ("Sorry, your path doesn't exist.")
+	
+		  
+if __name__== "__main__":
+    args = parse_path()
+    search_dir(args.full_path, args.file_name)
+		  
