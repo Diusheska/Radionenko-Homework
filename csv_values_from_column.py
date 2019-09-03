@@ -10,7 +10,7 @@ def parse_path():
    parser.add_argument("csv_path", help = "Full path to csv file")
    parser.add_argument("col_name", help = "Column header", nargs= "+")
    args = parser.parse_args()
-   # next 2 lines will join space-separate arguments for column names, replace spaces with '_' and set to lowercase
+   # next 2 lines will join space-separated arguments in column names, replace spaces with '_' and set to lowercase
    column_joined = '_'.join(args.col_name)
    column_fix_spaces = re.sub(r"\s+", '_', column_joined).lower() 
    return args.csv_path, column_fix_spaces
