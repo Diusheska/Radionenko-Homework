@@ -1,0 +1,20 @@
+import argparse, csv, json, re, pypyodbc
+
+def read_sql():
+    with open(r'C:\Users\Nadiia_Radionenko\Desktop\user_details_insert.sql', 'r') as script_file:
+        script_to_use=" ".join(line.rstrip() for line in script_file)
+        return script_to_use
+        
+def set_up_connection(script_to_run):
+    connection = pypyodbc.connect("Driver={SQL Server};"
+                                  "Server=EPUALVIW0463;"
+                                  "Database=EDW_Test;"
+                                  "Trusted_Connection=yes;")
+    cursor = connection.cursor()
+    cursor.execute(script_to_run)
+    for row in cursor:
+        print(row)
+		
+		
+script_to_use = read_sql()
+set_up_connection(script_to_use)
