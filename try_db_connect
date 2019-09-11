@@ -5,6 +5,7 @@ def read_sql():
         script_to_use=" ".join(line.rstrip() for line in script_file)
         return script_to_use
 
+		
 def set_up_connection(script_to_run):
     connection = pypyodbc.connect("Driver={SQL Server};"
                                   "Server=EPUALVIW0463;"
@@ -15,16 +16,21 @@ def set_up_connection(script_to_run):
     return cursor_results
 
 
-def convert_to_json(result_set):
+def read_query_results(result_set):
+    headers = [element[0] for element in result_set.description]
+    data_to_convert = []
     for row in result_set:
-        d = {}
-        for idx, col in enumerate(result_set.description):
-            if col[0] != 'password':
-                d[col[0]] = row[idx]
-                output_json = json.dumps(list(d), sort_keys = True, indent = 4)
-                print(output_json)
+        row_to_dict = {k: v for k, v in zip(headers, row) if k != 'password'}
+        data_to_convert.append(row_to_dict)
+    return data_to_convert
+	
+	
+def convert_to_json(data_to_convert):
+    output_json = json.dumps(data_to_convert, sort_keys = True, indent = 4)
+    print(output_json)
 
 
 script_to_use = read_sql()
 cursor_results = set_up_connection(script_to_use)
-convert_to_json(cursor_results)
+data_to_convert = read_query_results(cursor_results)
+convert_to_json(data_to_convert)
