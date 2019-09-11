@@ -1,20 +1,30 @@
-import argparse, csv, json, re, pypyodbc
+import argparse, pypyodbc, json, collections
 
 def read_sql():
-    with open(r'C:\Users\Nadiia_Radionenko\Desktop\user_details_insert.sql', 'r') as script_file:
+    with open(r'C:\Users\Nadiia_Radionenko\Desktop\user_details_insert.sql', 'r', encoding="utf-8") as script_file:
         script_to_use=" ".join(line.rstrip() for line in script_file)
         return script_to_use
-        
+
 def set_up_connection(script_to_run):
     connection = pypyodbc.connect("Driver={SQL Server};"
                                   "Server=EPUALVIW0463;"
                                   "Database=EDW_Test;"
                                   "Trusted_Connection=yes;")
     cursor = connection.cursor()
-    cursor.execute(script_to_run)
-    for row in cursor:
-        print(row)
-		
-		
+    cursor_results = cursor.execute(script_to_run)
+    return cursor_results
+
+
+def convert_to_json(result_set):
+    for row in result_set:
+        d = {}
+        for idx, col in enumerate(result_set.description):
+            if col[0] != 'password':
+                d[col[0]] = row[idx]
+                output_json = json.dumps(list(d), sort_keys = True, indent = 4)
+                print(output_json)
+
+
 script_to_use = read_sql()
-set_up_connection(script_to_use)
+cursor_results = set_up_connection(script_to_use)
+convert_to_json(cursor_results)
