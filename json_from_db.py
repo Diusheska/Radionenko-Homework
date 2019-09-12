@@ -13,7 +13,7 @@ def parse_path():
 
 def read_sql(sql_path):
     with open(sql_path, 'r', encoding="utf-8") as script_file:
-        script_to_use=" ".join(line.rstrip() for line in script_file)
+        script_to_use=" ".join(line.rstrip() for line in script_file) # to read SQL statements properly
         return script_to_use
 
 
@@ -24,17 +24,16 @@ def set_up_connection(server_name, db_name, script_to_run):
                                   "Trusted_Connection=yes;" % (server_name, db_name))
     cursor = connection.cursor()
     cursor_results = cursor.execute(script_to_run)
-    print (tuple(db_name))
     return cursor_results
 
 
 def read_query_results(result_set):
-    headers = [element[0] for element in result_set.description]
+    headers = [element[0] for element in result_set.description] # we need headers from sql table for our JSON
     data_to_convert = []
     for row in result_set:
-        row_to_dict = {k: v for k, v in zip(headers, row) if k != 'password'}
+        row_to_dict = {k: v for k, v in zip(headers, row) if k != 'password'} # generate dictionary for each row from sql combining column headers as keys and rows as values
         data_to_convert.append(row_to_dict)
-    return data_to_convert
+    return data_to_convert # now we have a list of dictionaries, where each dictionary = sql row + headers. it's easy to convert this list to json now
 
 
 def convert_to_json(data_to_convert):
