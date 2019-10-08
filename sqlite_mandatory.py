@@ -1,7 +1,7 @@
 # to rum this code in cmd you need to provide the following arguments:
 # - db db_file_name, -csv1 path_to_csv_file_with_projects_data, -csv2 path_to_csv_file_with_tasks_data, -col name_of_project_to_filter_by
 
-import argparse, os.path, csv, sqlite3
+import argparse, os.path, csv, sqlite3, codecs
 from prettytable import PrettyTable
 
 parser = argparse.ArgumentParser(description = "Arguments to create db, create and populate tables in this db from csv files and print values from a table with given condition")
@@ -45,7 +45,7 @@ def create_tables(conn):
 
 def populate_tables (conn, csv1, csv2):
     curs = conn.cursor()
-    with open(csv1,'rt') as project_data_source, open(csv2, 'rt') as tasks_data_source:
+    with codecs.open(csv1, encoding='utf-8') as project_data_source, codecs.open(csv2, encoding='utf-8') as tasks_data_source:
         dr_proj = csv.DictReader(project_data_source)
         dr_tasks = csv.DictReader(tasks_data_source)
         to_db_proj = [(i['name'], i['description'], i['deadline']) for i in dr_proj]
