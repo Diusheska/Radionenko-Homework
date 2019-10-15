@@ -36,16 +36,10 @@ def set_up_sql_connection(db_name):
     return conn
 
 
-def get_project_data(conn):
+def get_sql_data(conn, table_name):
     curs = conn.cursor()
-    project_table_data = curs.execute("select * from project")
-    return project_table_data
-
-
-def get_tasks_data(conn):
-    curs2 = conn.cursor()
-    tasks_table_data = curs2.execute("select * from tasks")
-    return tasks_table_data
+    table_data = curs.execute("select * from %s" %table_name)
+    return table_data
 
 
 def convert_sql_data (sql_data, column_name):
@@ -95,8 +89,8 @@ if __name__ == '__main__':
     projects = create_collection(my_db, args.project_data_source)
     tasks = create_collection(my_db, args.tasks_data_source)
     conn = set_up_sql_connection(args.sql_db_name)
-    project_table_data = get_project_data(conn)
-    tasks_table_data = get_tasks_data(conn)
+    project_table_data = get_sql_data(conn, args.project_data_source)
+    tasks_table_data = get_sql_data(conn, args.tasks_data_source)
     proj_for_mongo = convert_sql_data(project_table_data, args.id_in_collection1)
     tasks_for_mongo = convert_sql_data(tasks_table_data, args.id_in_collection2)
     insert_into_collection (my_db, args.project_data_source, args.tasks_data_source, proj_for_mongo, tasks_for_mongo)
